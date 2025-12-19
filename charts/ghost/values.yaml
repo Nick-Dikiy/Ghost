@@ -1,0 +1,101 @@
+replicaCount: 1
+
+image:
+  repository: ghost
+  pullPolicy: IfNotPresent
+  tag: "alpine3.23"
+
+
+
+ghost:
+  url: "http://ghost.local"
+  database:
+    client: mysql
+    connection:
+      host: mysql-haproxy
+      port: 3306
+      user: root
+      password: "changeme"
+      database: ghost
+
+
+
+service:
+  type: ClusterIP
+  port: 2368
+
+
+
+ingress:
+  enabled: false
+  className: traefik
+  annotations: {
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+  }
+  hosts:
+    - host: ghost.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+
+
+resources:
+  requests:
+     cpu: 100m
+     memory: 128Mi
+  limits:
+     cpu: 500m
+     memory: 512Mi
+
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 7
+  targetCPUUtilizationPercentage: 80
+
+
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 2368
+  initialDelaySeconds: 120
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 2368
+  initialDelaySeconds: 30
+  periodSeconds: 5
+
+
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 5Gi
+
+
+
+serviceAccount:
+  create: true
+  annotations: {}
+  automount: false
+  name: ""
+
+
+
+volumeMounts:
+  - name: ghost-content
+    mountPath: /var/lib/ghost/content
+
+volumes:
+  - name: ghost-content
+    persistentVolumeClaim:
+      claimName: ghost-content
