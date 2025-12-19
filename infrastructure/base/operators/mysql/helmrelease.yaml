@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mysql-operator
+  namespace: mysql-operator
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: mysql-operator
+      version: "2.x"
+      sourceRef:
+        kind: HelmRepository
+        name: mysql-operator
+        namespace: mysql-operator
+      interval: 1h
+  install:
+    crds: Create
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3

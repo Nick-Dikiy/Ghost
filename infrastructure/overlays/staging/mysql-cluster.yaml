@@ -1,0 +1,17 @@
+apiVersion: mysql.oracle.com/v2
+kind: InnoDBCluster
+metadata:
+  name: mysql
+  namespace: staging
+spec:
+  secretName: mysql-secrets
+  tlsUseSelfSigned: true
+  instances: 1
+  router:
+    instances: 1
+  datadirVolumeClaimTemplate:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi

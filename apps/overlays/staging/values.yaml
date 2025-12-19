@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  tag: "6-alpine"
+
+ghost:
+  url: "http://ghost.staging.local"
+  database:
+    client: mysql
+    connection:
+      host: mysql
+      port: 3306
+      user: root
+      password: "root_password_staging"
+      database: ghost
+
+service:
+  type: ClusterIP
+  port: 2368
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  hosts:
+    - host: ghost.staging.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+autoscaling:
+  enabled: false
+
+persistence:
+  enabled: true
+  size: 5Gi
