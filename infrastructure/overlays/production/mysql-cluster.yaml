@@ -1,54 +1,17 @@
-apiVersion: ps.percona.com/v1alpha1
-kind: PerconaServerMySQL
+apiVersion: mysql.oracle.com/v2
+kind: InnoDBCluster
 metadata:
   name: mysql
   namespace: production
 spec:
-  secretsName: mysql-secrets
-
-  mysql:
-    clusterType: group-replication
-    image: percona/percona-server:8.0.36
-    size: 3
+  secretName: mysql-secrets
+  tlsUseSelfSigned: true
+  instances: 3
+  router:
+    instances: 2
+  datadirVolumeClaimTemplate:
+    accessModes:
+      - ReadWriteOnce
     resources:
       requests:
-        cpu: 500m
-        memory: 1Gi
-      limits:
-        cpu: 1000m
-        memory: 2Gi
-    volumeSpec:
-      persistentVolumeClaim:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 10Gi
-
-  proxy:
-    haproxy:
-      enabled: true
-      size: 2
-      image: percona/haproxy:2.8.5
-      resources:
-        requests:
-          cpu: 200m
-          memory: 256Mi
-        limits:
-          cpu: 500m
-          memory: 512Mi
-
-  orchestrator:
-    enabled: true
-    size: 3
-    image: percona/percona-orchestrator:3.2.6
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-
-  backup:
-    enabled: false
+        storage: 10Gi

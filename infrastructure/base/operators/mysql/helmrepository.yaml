@@ -1,8 +1,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: percona
+  name: mysql-operator
   namespace: mysql-operator
 spec:
   interval: 1h
-  url: https://percona.github.io/percona-helm-charts/
+  url: https://mysql.github.io/mysql-operator/

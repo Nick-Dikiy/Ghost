@@ -6,9 +6,13 @@ image:
 ghost:
   url: "http://ghost.staging.local"
   database:
+    client: mysql
     connection:
-      host: mysql-haproxy
-      password: "root_password_staging"
+      host: mysql-router
+      port: 6446
+      user: root
+      password: "root_password_production"
+      database: ghost
 
 service:
   type: ClusterIP
