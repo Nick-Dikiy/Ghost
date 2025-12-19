@@ -1,0 +1,7 @@
+apiVersion: v2
+name: ghost
+description: A Helm chart for Ghost
+
+type: application
+version: 0.1.0
+appVersion: "6.10.3"

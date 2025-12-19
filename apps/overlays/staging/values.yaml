@@ -1,0 +1,49 @@
+replicaCount: 2
+
+image:
+  tag: "6-alpine"
+
+ghost:
+  url: "https://ghost.local"
+  database:
+    connection:
+      host: mysql-haproxy
+      password: "root_password_production_CHANGE_ME"
+
+service:
+  type: ClusterIP
+  port: 2368
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"
+  hosts:
+    - host: ghost.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: ghost-tls
+      hosts:
+        - ghost.local
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+persistence:
+  enabled: true
+  size: 10Gi
